@@ -1,22 +1,22 @@
 package filters
 
 type IDFilter struct {
-	Eq          interface{}   `json:"eq,omitempty"`
-	Ne          interface{}   `json:"ne,omitempty"`
-	Lt          interface{}   `json:"lt,omitempty"`
-	Lte         interface{}   `json:"lte,omitempty"`
-	Gt          interface{}   `json:"gt,omitempty"`
-	Gte         interface{}   `json:"gte,omitempty"`
-	In          []interface{} `json:"in,omitempty"`
-	Nin         []interface{} `json:"nin,omitempty"`
-	Contains    interface{}   `json:"contains,omitempty"`
-	NContains   interface{}   `json:"nContains,omitempty"`
-	StartsWith  interface{}   `json:"startsWith,omitempty"`
-	NStartsWith interface{}   `json:"nStartsWith,omitempty"`
-	EndsWith    interface{}   `json:"endsWith,omitempty"`
-	NEndsWith   interface{}   `json:"nEndsWith,omitempty"`
-	IsNull      bool          `json:"isNull,omitempty"`
-	IsNotNull   bool          `json:"isNotNull,omitempty"`
+	Eq          *interface{}   `json:"eq,omitempty"`
+	Ne          *interface{}   `json:"ne,omitempty"`
+	Lt          *interface{}   `json:"lt,omitempty"`
+	Lte         *interface{}   `json:"lte,omitempty"`
+	Gt          *interface{}   `json:"gt,omitempty"`
+	Gte         *interface{}   `json:"gte,omitempty"`
+	In          *[]interface{} `json:"in,omitempty"`
+	Nin         *[]interface{} `json:"nin,omitempty"`
+	Contains    *interface{}   `json:"contains,omitempty"`
+	NContains   *interface{}   `json:"nContains,omitempty"`
+	StartsWith  *interface{}   `json:"startsWith,omitempty"`
+	NStartsWith *interface{}   `json:"nStartsWith,omitempty"`
+	EndsWith    *interface{}   `json:"endsWith,omitempty"`
+	NEndsWith   *interface{}   `json:"nEndsWith,omitempty"`
+	IsNull      *bool          `json:"isNull,omitempty"`
+	IsNotNull   *bool          `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) ID(filter interface{}, where bool) {

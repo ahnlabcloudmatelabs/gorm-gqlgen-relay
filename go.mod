@@ -3,6 +3,7 @@ module github.com/cloudmatelabs/gorm-gqlgen-relay
 go 1.20
 
 require (
+	github.com/google/uuid v1.3.0
 	gorm.io/datatypes v1.2.0
 	gorm.io/gorm v1.25.2
 )

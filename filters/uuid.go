@@ -1,12 +1,14 @@
 package filters
 
+import "github.com/google/uuid"
+
 type UUIDFilter struct {
-	Eq        string   `json:"eq,omitempty"`
-	Ne        string   `json:"ne,omitempty"`
-	In        []string `json:"in,omitempty"`
-	Nin       []string `json:"nIn,omitempty"`
-	IsNull    bool     `json:"isNull,omitempty"`
-	IsNotNull bool     `json:"isNotNull,omitempty"`
+	Eq        *uuid.UUID   `json:"eq,omitempty"`
+	Ne        *uuid.UUID   `json:"ne,omitempty"`
+	In        *[]uuid.UUID `json:"in,omitempty"`
+	Nin       *[]uuid.UUID `json:"nIn,omitempty"`
+	IsNull    *bool        `json:"isNull,omitempty"`
+	IsNotNull *bool        `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) UUID(filter interface{}, where bool) {

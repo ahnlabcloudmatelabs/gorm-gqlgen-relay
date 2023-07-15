@@ -1,16 +1,18 @@
 package filters
 
+import "time"
+
 type TimeFilter struct {
-	Eq        string   `json:"eq,omitempty"`
-	Ne        string   `json:"ne,omitempty"`
-	In        []string `json:"in,omitempty"`
-	Nin       []string `json:"nIn,omitempty"`
-	Lt        string   `json:"lt,omitempty"`
-	Lte       string   `json:"lte,omitempty"`
-	Gt        string   `json:"gt,omitempty"`
-	Gte       string   `json:"gte,omitempty"`
-	IsNull    bool     `json:"isNull,omitempty"`
-	IsNotNull bool     `json:"isNotNull,omitempty"`
+	Eq        *time.Time   `json:"eq,omitempty"`
+	Ne        *time.Time   `json:"ne,omitempty"`
+	In        *[]time.Time `json:"in,omitempty"`
+	Nin       *[]time.Time `json:"nIn,omitempty"`
+	Lt        *time.Time   `json:"lt,omitempty"`
+	Lte       *time.Time   `json:"lte,omitempty"`
+	Gt        *time.Time   `json:"gt,omitempty"`
+	Gte       *time.Time   `json:"gte,omitempty"`
+	IsNull    *bool        `json:"isNull,omitempty"`
+	IsNotNull *bool        `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) Time(filter interface{}, where bool) {

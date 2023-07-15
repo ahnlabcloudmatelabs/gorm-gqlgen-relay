@@ -1,16 +1,16 @@
 package filters
 
 type IntFilter struct {
-	Eq        int   `json:"eq,omitempty"`
-	Ne        int   `json:"ne,omitempty"`
-	In        []int `json:"in,omitempty"`
-	Nin       []int `json:"nIn,omitempty"`
-	Lt        int   `json:"lt,omitempty"`
-	Lte       int   `json:"lte,omitempty"`
-	Gt        int   `json:"gt,omitempty"`
-	Gte       int   `json:"gte,omitempty"`
-	IsNull    bool  `json:"isNull,omitempty"`
-	IsNotNull bool  `json:"isNotNull,omitempty"`
+	Eq        *int   `json:"eq,omitempty"`
+	Ne        *int   `json:"ne,omitempty"`
+	In        *[]int `json:"in,omitempty"`
+	Nin       *[]int `json:"nIn,omitempty"`
+	Lt        *int   `json:"lt,omitempty"`
+	Lte       *int   `json:"lte,omitempty"`
+	Gt        *int   `json:"gt,omitempty"`
+	Gte       *int   `json:"gte,omitempty"`
+	IsNull    bool   `json:"isNull,omitempty"`
+	IsNotNull bool   `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) Int(filter interface{}, where bool) {

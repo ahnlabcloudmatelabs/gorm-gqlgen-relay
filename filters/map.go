@@ -7,10 +7,10 @@ import (
 )
 
 type MapFilter struct {
-	Eq  map[string]interface{} `json:"eq,omitempty"`
-	Ne  map[string]interface{} `json:"ne,omitempty"`
-	In  []string               `json:"in,omitempty"`
-	Nin []string               `json:"nIn,omitempty"`
+	Eq  *map[string]interface{} `json:"eq,omitempty"`
+	Ne  *map[string]interface{} `json:"ne,omitempty"`
+	In  *[]string               `json:"in,omitempty"`
+	Nin *[]string               `json:"nIn,omitempty"`
 }
 
 func (f *Filter) Map(filter interface{}, where bool) {

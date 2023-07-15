@@ -1,18 +1,18 @@
 package filters
 
 type StringFilter struct {
-	Eq          string   `json:"eq,omitempty"`
-	Ne          string   `json:"ne,omitempty"`
-	In          []string `json:"in,omitempty"`
-	Nin         []string `json:"nIn,omitempty"`
-	Contains    string   `json:"contains,omitempty"`
-	NContains   string   `json:"nContains,omitempty"`
-	StartsWith  string   `json:"startsWith,omitempty"`
-	NStartsWith string   `json:"nStartsWith,omitempty"`
-	EndsWith    string   `json:"endsWith,omitempty"`
-	NEndsWith   string   `json:"nEndsWith,omitempty"`
-	IsNull      bool     `json:"isNull,omitempty"`
-	IsNotNull   bool     `json:"isNotNull,omitempty"`
+	Eq          *string   `json:"eq,omitempty"`
+	Ne          *string   `json:"ne,omitempty"`
+	In          *[]string `json:"in,omitempty"`
+	Nin         *[]string `json:"nIn,omitempty"`
+	Contains    *string   `json:"contains,omitempty"`
+	NContains   *string   `json:"nContains,omitempty"`
+	StartsWith  *string   `json:"startsWith,omitempty"`
+	NStartsWith *string   `json:"nStartsWith,omitempty"`
+	EndsWith    *string   `json:"endsWith,omitempty"`
+	NEndsWith   *string   `json:"nEndsWith,omitempty"`
+	IsNull      *bool     `json:"isNull,omitempty"`
+	IsNotNull   *bool     `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) String(filter interface{}, where bool) {
