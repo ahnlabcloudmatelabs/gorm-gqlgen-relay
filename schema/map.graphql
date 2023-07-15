@@ -1,0 +1,6 @@
+input MapFilter {
+  eq: Map
+  ne: Map
+  in: [String!]
+  nIn: [String!]
+}

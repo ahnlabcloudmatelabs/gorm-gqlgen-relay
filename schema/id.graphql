@@ -1,0 +1,18 @@
+input IDFilter {
+  eq: String
+  ne: String
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  in: [String!]
+  nin: [String!]
+  contains: Int
+  nContains: Int
+  startsWith: Int
+  nStartsWith: Int
+  endsWith: Int
+  nEndsWith: Int
+  isNull: Boolean
+  isNotNull: Boolean
+}

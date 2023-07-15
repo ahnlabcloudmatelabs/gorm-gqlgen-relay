@@ -1,0 +1,12 @@
+input TimeFilter {
+  eq: Time
+  ne: Time
+  in: [Time!]
+  nin: [Time!]
+  lt: Time
+  lte: Time
+  gt: Time
+  gte: Time
+  isNull: Boolean
+  isNotNull: Boolean
+}

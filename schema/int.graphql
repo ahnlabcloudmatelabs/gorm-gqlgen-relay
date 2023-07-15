@@ -1,0 +1,12 @@
+input IntFilter {
+  eq: Int
+  ne: Int
+  in: [Int!]
+  nIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  isNull: Boolean
+  isNotNull: Boolean
+}

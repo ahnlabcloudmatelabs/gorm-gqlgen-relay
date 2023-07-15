@@ -1,0 +1,8 @@
+input UUIDFilter {
+  eq: UUID
+  ne: UUID
+  in: [UUID!]
+  nin: [UUID!]
+  isNull: Boolean
+  isNotNull: Boolean
+}
