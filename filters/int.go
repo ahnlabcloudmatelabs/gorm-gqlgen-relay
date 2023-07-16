@@ -9,8 +9,8 @@ type IntFilter struct {
 	Lte       *int   `json:"lte,omitempty"`
 	Gt        *int   `json:"gt,omitempty"`
 	Gte       *int   `json:"gte,omitempty"`
-	IsNull    bool   `json:"isNull,omitempty"`
-	IsNotNull bool   `json:"isNotNull,omitempty"`
+	IsNull    *bool  `json:"isNull,omitempty"`
+	IsNotNull *bool  `json:"isNotNull,omitempty"`
 }
 
 func (f *Filter) Int(filter interface{}, where bool) {
