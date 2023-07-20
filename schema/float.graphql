@@ -1,0 +1,15 @@
+input FloatFilter {
+  not: FloatFilter
+  and: [FloatFilter!]
+  or: [FloatFilter!]
+  equal: Float
+  notEqual: Float
+  in: [Float!]
+  notIn: [Float!]
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  isNull: Boolean
+  isNotNull: Boolean
+}

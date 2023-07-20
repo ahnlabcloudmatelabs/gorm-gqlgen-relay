@@ -1,18 +1,20 @@
 input IDFilter {
-  eq: String
-  ne: String
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  in: [String!]
-  nin: [String!]
-  contains: Int
-  nContains: Int
-  startsWith: Int
-  nStartsWith: Int
-  endsWith: Int
-  nEndsWith: Int
+  not: IDFilter
+  and: [IDFilter!]
+  or: [IDFilter!]
+  equal: ID
+  equalFold: ID
+  notEqual: ID
+  in: [ID!]
+  notIn: [ID!]
+  contains: ID
+  containsFold: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  hasPrefix: ID
+  hasSuffix: ID
   isNull: Boolean
   isNotNull: Boolean
 }

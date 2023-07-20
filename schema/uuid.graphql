@@ -1,8 +1,15 @@
 input UUIDFilter {
-  eq: UUID
-  ne: UUID
+  not: UUIDFilter
+  and: [UUIDFilter!]
+  or: [UUIDFilter!]
+  equal: UUID
+  notEqual: UUID
   in: [UUID!]
-  nin: [UUID!]
+  notIn: [UUID!]
+  gt: UUID
+  gte: UUID
+  lt: UUID
+  lte: UUID
   isNull: Boolean
   isNotNull: Boolean
 }

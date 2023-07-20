@@ -1,12 +1,15 @@
 input TimeFilter {
-  eq: Time
-  ne: Time
+  not: TimeFilter
+  and: [TimeFilter!]
+  or: [TimeFilter!]
+  equal: Time
+  notEqual: Time
   in: [Time!]
-  nin: [Time!]
-  lt: Time
-  lte: Time
+  notIn: [Time!]
   gt: Time
   gte: Time
+  lt: Time
+  lte: Time
   isNull: Boolean
   isNotNull: Boolean
 }

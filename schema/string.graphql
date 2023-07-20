@@ -1,14 +1,20 @@
 input StringFilter {
-  eq: String
-  ne: String
+  not: StringFilter
+  and: [StringFilter!]
+  or: [StringFilter!]
+  equal: String
+  equalFold: String
+  notEqual: String
   in: [String!]
-  nin: [String!]
-  contains: Int
-  nContains: Int
-  startsWith: Int
-  nStartsWith: Int
-  endsWith: Int
-  nEndsWith: Int
+  notIn: [String!]
+  contains: String
+  containsFold: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  hasPrefix: String
+  hasSuffix: String
   isNull: Boolean
   isNotNull: Boolean
 }
