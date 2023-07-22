@@ -26,7 +26,7 @@ func NotEqual[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func EqualFold[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func EqualFold(field string, value *string) func(db *gorm.DB) *gorm.DB {
 	if value == nil {
 		return self()
 	}
