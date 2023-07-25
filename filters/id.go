@@ -8,24 +8,21 @@ import (
 )
 
 type IDFilter[T any] struct {
-	Not                *IDFilter[T]   `json:"not,omitempty"`
-	And                *[]IDFilter[T] `json:"and,omitempty"`
-	Or                 *[]IDFilter[T] `json:"or,omitempty"`
-	Equal              *T             `json:"equal,omitempty"`
-	EqualFold          *T             `json:"equalFold,omitempty"`
-	NotEqual           *T             `json:"notEqual,omitempty"`
-	In                 *[]T           `json:"in,omitempty"`
-	NotIn              *[]T           `json:"notIn,omitempty"`
-	Contains           *T             `json:"contains,omitempty"`
-	ContainsFold       *T             `json:"containsFold,omitempty"`
-	GreaterThan        *T             `json:"gt,omitempty"`
-	GreaterThanOrEqual *T             `json:"gte,omitempty"`
-	LessThan           *T             `json:"lt,omitempty"`
-	LessThanOrEqual    *T             `json:"lte,omitempty"`
-	HasPrefix          *T             `json:"hasPrefix,omitempty"`
-	HasSuffix          *T             `json:"hasSuffix,omitempty"`
-	IsNull             *bool          `json:"isNull,omitempty"`
-	IsNotNull          *bool          `json:"isNotNull,omitempty"`
+	Equal              *T    `json:"equal,omitempty"`
+	EqualFold          *T    `json:"equalFold,omitempty"`
+	NotEqual           *T    `json:"notEqual,omitempty"`
+	In                 *[]T  `json:"in,omitempty"`
+	NotIn              *[]T  `json:"notIn,omitempty"`
+	Contains           *T    `json:"contains,omitempty"`
+	ContainsFold       *T    `json:"containsFold,omitempty"`
+	GreaterThan        *T    `json:"gt,omitempty"`
+	GreaterThanOrEqual *T    `json:"gte,omitempty"`
+	LessThan           *T    `json:"lt,omitempty"`
+	LessThanOrEqual    *T    `json:"lte,omitempty"`
+	HasPrefix          *T    `json:"hasPrefix,omitempty"`
+	HasSuffix          *T    `json:"hasSuffix,omitempty"`
+	IsNull             *bool `json:"isNull,omitempty"`
+	IsNotNull          *bool `json:"isNotNull,omitempty"`
 }
 
 func ID[T any](db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
@@ -67,32 +64,6 @@ func ID[T any](db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
 	}
 
 	db = db.Scopes(wheres...)
-
-	if filter.Not != nil {
-		db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-			return d.Not(ID[T](d, field, *filter.Not))
-		})
-	}
-
-	if filter.And != nil {
-		for _, and := range *filter.And {
-			_filter := and
-
-			db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-				return d.Where(ID[T](d, field, _filter))
-			})
-		}
-	}
-
-	if filter.Or != nil {
-		for _, or := range *filter.Or {
-			_filter := or
-
-			db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-				return d.Or(ID[T](d, field, _filter))
-			})
-		}
-	}
 
 	return db, nil
 }

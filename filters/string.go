@@ -6,24 +6,21 @@ import (
 )
 
 type StringFilter struct {
-	Not                *StringFilter   `json:"not,omitempty"`
-	And                *[]StringFilter `json:"and,omitempty"`
-	Or                 *[]StringFilter `json:"or,omitempty"`
-	Equal              *string         `json:"equal,omitempty"`
-	EqualFold          *string         `json:"equalFold,omitempty"`
-	NotEqual           *string         `json:"notEqual,omitempty"`
-	In                 *[]string       `json:"in,omitempty"`
-	NotIn              *[]string       `json:"notIn,omitempty"`
-	Contains           *string         `json:"contains,omitempty"`
-	ContainsFold       *string         `json:"containsFold,omitempty"`
-	GreaterThan        *string         `json:"gt,omitempty"`
-	GreaterThanOrEqual *string         `json:"gte,omitempty"`
-	LessThan           *string         `json:"lt,omitempty"`
-	LessThanOrEqual    *string         `json:"lte,omitempty"`
-	HasPrefix          *string         `json:"hasPrefix,omitempty"`
-	HasSuffix          *string         `json:"hasSuffix,omitempty"`
-	IsNull             *bool           `json:"isNull,omitempty"`
-	IsNotNull          *bool           `json:"isNotNull,omitempty"`
+	Equal              *string   `json:"equal,omitempty"`
+	EqualFold          *string   `json:"equalFold,omitempty"`
+	NotEqual           *string   `json:"notEqual,omitempty"`
+	In                 *[]string `json:"in,omitempty"`
+	NotIn              *[]string `json:"notIn,omitempty"`
+	Contains           *string   `json:"contains,omitempty"`
+	ContainsFold       *string   `json:"containsFold,omitempty"`
+	GreaterThan        *string   `json:"gt,omitempty"`
+	GreaterThanOrEqual *string   `json:"gte,omitempty"`
+	LessThan           *string   `json:"lt,omitempty"`
+	LessThanOrEqual    *string   `json:"lte,omitempty"`
+	HasPrefix          *string   `json:"hasPrefix,omitempty"`
+	HasSuffix          *string   `json:"hasSuffix,omitempty"`
+	IsNull             *bool     `json:"isNull,omitempty"`
+	IsNotNull          *bool     `json:"isNotNull,omitempty"`
 }
 
 func String(db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
@@ -49,32 +46,6 @@ func String(db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
 		query.IsNull(field, filter.IsNull),
 		query.IsNotNull(field, filter.IsNotNull),
 	)
-
-	if filter.Not != nil {
-		db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-			return d.Not(String(d, field, *filter.Not))
-		})
-	}
-
-	if filter.And != nil {
-		for _, and := range *filter.And {
-			_filter := and
-
-			db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-				return d.Where(String(d, field, _filter))
-			})
-		}
-	}
-
-	if filter.Or != nil {
-		for _, or := range *filter.Or {
-			_filter := or
-
-			db = db.Scopes(func(d *gorm.DB) *gorm.DB {
-				return d.Or(String(d, field, _filter))
-			})
-		}
-	}
 
 	return db, nil
 }
