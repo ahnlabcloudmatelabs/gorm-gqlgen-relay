@@ -1,37 +1,27 @@
 package query
 
-import (
-	"gorm.io/gorm"
-)
-
-func IsNull(field string, value *bool) func(db *gorm.DB) *gorm.DB {
+func IsNull(field string, value *bool, queryString *string) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	query := field + " IS NULL"
-
-	if !*value {
-		query = field + " IS NOT NULL"
+	if *value {
+		queryAppend(queryString, field+" IS NULL")
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(query)
-	}
+	queryAppend(queryString, field+" IS NOT NULL")
 }
 
-func IsNotNull(field string, value *bool) func(db *gorm.DB) *gorm.DB {
+func IsNotNull(field string, value *bool, queryString *string) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	query := field + " IS NULL"
-
-	if !*value {
-		query = field + " IS NOT NULL"
+	if *value {
+		queryAppend(queryString, field+" IS NOT NULL")
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Not(query)
-	}
+	queryAppend(queryString, field+" IS NULL")
 }

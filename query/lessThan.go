@@ -1,25 +1,19 @@
 package query
 
-import (
-	"gorm.io/gorm"
-)
-
-func LessThan[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func LessThan[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" < ?", *value)
-	}
+	queryAppend(queryString, field+" < ?")
+	*values = append(*values, *value)
 }
 
-func LessThanOrEqual[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func LessThanOrEqual[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" <= ?", *value)
-	}
+	queryAppend(queryString, field+" <= ?")
+	*values = append(*values, *value)
 }

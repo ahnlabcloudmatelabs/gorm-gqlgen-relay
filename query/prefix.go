@@ -2,26 +2,22 @@ package query
 
 import (
 	"fmt"
-
-	"gorm.io/gorm"
 )
 
-func HasPrefix(field string, value *string) func(db *gorm.DB) *gorm.DB {
+func HasPrefix(field string, value *string, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s LIKE '%s%%'", field, *value))
-	}
+	queryAppend(queryString, fmt.Sprintf("%s LIKE ?", field))
+	*values = append(*values, fmt.Sprintf("%s%%", *value))
 }
 
-func HasSuffix(field string, value *string) func(db *gorm.DB) *gorm.DB {
+func HasSuffix(field string, value *string, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s LIKE '%%%s'", field, *value))
-	}
+	queryAppend(queryString, fmt.Sprintf("%s LIKE ?", field))
+	*values = append(*values, fmt.Sprintf("%%%s", *value))
 }

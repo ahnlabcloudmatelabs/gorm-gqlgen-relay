@@ -1,10 +1,9 @@
 package filters
 
 import (
-	"fmt"
+	"reflect"
 
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/query"
-	"gorm.io/gorm"
 )
 
 type IDFilter[T any] struct {
@@ -25,45 +24,41 @@ type IDFilter[T any] struct {
 	IsNotNull          *bool `json:"isNotNull,omitempty"`
 }
 
-func ID[T any](db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
-	var filter Filter[T]
-	if err := filter.Parse(input); err != nil {
-		return db, err
+func ID(field string, input any) (queryString string, values []any, err error) {
+	var filter Filter[any]
+	if err = filter.Parse(input); err != nil {
+		return
 	}
 
-	wheres := [](func(db *gorm.DB) *gorm.DB){
-		query.Equal(field, filter.Equal),
-		query.NotEqual(field, filter.NotEqual),
-		query.In(field, filter.In),
-		query.NotIn(field, filter.NotIn),
-		query.GreaterThan(field, filter.GreaterThan),
-		query.GreaterThanOrEqual(field, filter.GreaterThanOrEqual),
-		query.LessThan(field, filter.LessThan),
-		query.LessThanOrEqual(field, filter.LessThanOrEqual),
-		query.IsNull(field, filter.IsNull),
-		query.IsNotNull(field, filter.IsNotNull),
+	query.Equal(field, filter.Equal, &queryString, &values)
+	query.NotEqual(field, filter.NotEqual, &queryString, &values)
+	query.In(field, filter.In, &queryString, &values)
+	query.NotIn(field, filter.NotIn, &queryString, &values)
+	query.GreaterThan(field, filter.GreaterThan, &queryString, &values)
+	query.GreaterThanOrEqual(field, filter.GreaterThanOrEqual, &queryString, &values)
+	query.LessThan(field, filter.LessThan, &queryString, &values)
+	query.LessThanOrEqual(field, filter.LessThanOrEqual, &queryString, &values)
+	query.IsNull(field, filter.IsNull, &queryString)
+	query.IsNotNull(field, filter.IsNotNull, &queryString)
+
+	appendStringIDQuery(field, filter.EqualFold, &queryString, &values, query.EqualFold)
+	appendStringIDQuery(field, filter.Contains, &queryString, &values, query.Contains)
+	appendStringIDQuery(field, filter.ContainsFold, &queryString, &values, query.ContainsFold)
+	appendStringIDQuery(field, filter.HasPrefix, &queryString, &values, query.HasPrefix)
+	appendStringIDQuery(field, filter.HasSuffix, &queryString, &values, query.HasSuffix)
+
+	return
+}
+
+func appendStringIDQuery(field string, input *any, queryString *string, values *[]any, callback func(string, *string, *string, *[]any)) {
+	if input == nil {
+		return
 	}
 
-	if fmt.Sprintf("%T", *new(T)) == "string" {
-		toString := func(value *T) *string {
-			if value == nil {
-				return nil
-			}
-
-			_value := fmt.Sprintf("%v", *value)
-			return &_value
-		}
-
-		wheres = append(wheres, []func(db *gorm.DB) *gorm.DB{
-			query.EqualFold(field, toString(filter.EqualFold)),
-			query.Contains(field, toString(filter.Contains)),
-			query.ContainsFold(field, toString(filter.ContainsFold)),
-			query.HasPrefix(field, toString(filter.HasPrefix)),
-			query.HasSuffix(field, toString(filter.HasSuffix)),
-		}...)
+	if reflect.ValueOf(*input).Kind() != reflect.String {
+		return
 	}
 
-	db = db.Scopes(wheres...)
-
-	return db, nil
+	value := (*input).(string)
+	callback(field, &value, queryString, values)
 }

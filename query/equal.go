@@ -1,37 +1,28 @@
 package query
 
-import (
-	"fmt"
-
-	"gorm.io/gorm"
-)
-
-func Equal[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func Equal[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" = ?", *value)
-	}
+	queryAppend(queryString, field+" = ?")
+	*values = append(*values, *value)
 }
 
-func NotEqual[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func NotEqual[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" <> ?", *value)
-	}
+	queryAppend(queryString, field+" <> ?")
+	*values = append(*values, *value)
 }
 
-func EqualFold(field string, value *string) func(db *gorm.DB) *gorm.DB {
+func EqualFold(field string, value *string, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("LOWER(%s) = LOWER(?)", field), *value)
-	}
+	queryAppend(queryString, "LOWER("+field+") = LOWER(?)")
+	*values = append(*values, *value)
 }

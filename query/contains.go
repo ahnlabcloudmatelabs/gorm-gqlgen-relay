@@ -3,26 +3,22 @@ package query
 import (
 	"fmt"
 	"strings"
-
-	"gorm.io/gorm"
 )
 
-func Contains(field string, value *string) func(db *gorm.DB) *gorm.DB {
+func Contains(field string, value *string, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s LIKE '%%%s%%'", field, *value))
-	}
+	queryAppend(queryString, fmt.Sprintf("%s LIKE ?", field))
+	*values = append(*values, fmt.Sprintf("%%%s%%", *value))
 }
 
-func ContainsFold(field string, value *string) func(db *gorm.DB) *gorm.DB {
+func ContainsFold(field string, value *string, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("LOWER(%s) LIKE '%%%s%%'", field, strings.ToLower(*value)))
-	}
+	queryAppend(queryString, fmt.Sprintf("LOWER(%s) LIKE ?", field))
+	*values = append(*values, fmt.Sprintf("%%%s%%", strings.ToLower(*value)))
 }

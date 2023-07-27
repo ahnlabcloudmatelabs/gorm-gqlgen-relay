@@ -3,7 +3,6 @@ package filters
 import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/query"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type UUIDFilter struct {
@@ -19,24 +18,22 @@ type UUIDFilter struct {
 	IsNotNull          *bool        `json:"isNotNull,omitempty"`
 }
 
-func UUID(db *gorm.DB, field string, input interface{}) (*gorm.DB, error) {
+func UUID(field string, input any) (queryString string, values []any, err error) {
 	var filter Filter[uuid.UUID]
-	if err := filter.Parse(input); err != nil {
-		return db, err
+	if err = filter.Parse(input); err != nil {
+		return
 	}
 
-	db = db.Scopes(
-		query.Equal(field, filter.Equal),
-		query.NotEqual(field, filter.NotEqual),
-		query.In(field, filter.In),
-		query.NotIn(field, filter.NotIn),
-		query.GreaterThan(field, filter.GreaterThan),
-		query.GreaterThanOrEqual(field, filter.GreaterThanOrEqual),
-		query.LessThan(field, filter.LessThan),
-		query.LessThanOrEqual(field, filter.LessThanOrEqual),
-		query.IsNull(field, filter.IsNull),
-		query.IsNotNull(field, filter.IsNotNull),
-	)
+	query.Equal(field, filter.Equal, &queryString, &values)
+	query.NotEqual(field, filter.NotEqual, &queryString, &values)
+	query.In(field, filter.In, &queryString, &values)
+	query.NotIn(field, filter.NotIn, &queryString, &values)
+	query.GreaterThan(field, filter.GreaterThan, &queryString, &values)
+	query.GreaterThanOrEqual(field, filter.GreaterThanOrEqual, &queryString, &values)
+	query.LessThan(field, filter.LessThan, &queryString, &values)
+	query.LessThanOrEqual(field, filter.LessThanOrEqual, &queryString, &values)
+	query.IsNull(field, filter.IsNull, &queryString)
+	query.IsNotNull(field, filter.IsNotNull, &queryString)
 
-	return db, nil
+	return
 }

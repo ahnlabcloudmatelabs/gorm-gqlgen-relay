@@ -1,25 +1,19 @@
 package query
 
-import (
-	"gorm.io/gorm"
-)
-
-func In[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func In[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" IN ?", *value)
-	}
+	queryAppend(queryString, field+" IN ?")
+	*values = append(*values, *value)
 }
 
-func NotIn[T any](field string, value *T) func(db *gorm.DB) *gorm.DB {
+func NotIn[T any](field string, value *T, queryString *string, values *[]any) {
 	if value == nil {
-		return self()
+		return
 	}
 
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(field+" NOT IN ?", *value)
-	}
+	queryAppend(queryString, field+" NOT IN ?")
+	*values = append(*values, *value)
 }
