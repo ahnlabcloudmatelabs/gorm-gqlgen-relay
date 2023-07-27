@@ -1,7 +1,4 @@
 input IntFilter {
-  not: IntFilter
-  and: [IntFilter!]
-  or: [IntFilter!]
   equal: Int
   notEqual: Int
   in: [Int!]

@@ -1,7 +1,4 @@
 input FloatFilter {
-  not: FloatFilter
-  and: [FloatFilter!]
-  or: [FloatFilter!]
   equal: Float
   notEqual: Float
   in: [Float!]

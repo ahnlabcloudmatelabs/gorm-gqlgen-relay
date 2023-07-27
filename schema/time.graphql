@@ -1,7 +1,4 @@
 input TimeFilter {
-  not: TimeFilter
-  and: [TimeFilter!]
-  or: [TimeFilter!]
   equal: Time
   notEqual: Time
   in: [Time!]

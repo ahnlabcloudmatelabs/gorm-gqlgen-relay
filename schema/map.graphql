@@ -1,6 +1,0 @@
-input MapFilter {
-  equal: Map
-  notEqual: Map
-  in: [String!]
-  notIn: [String!]
-}

@@ -1,7 +1,4 @@
 input StringFilter {
-  not: StringFilter
-  and: [StringFilter!]
-  or: [StringFilter!]
   equal: String
   equalFold: String
   notEqual: String

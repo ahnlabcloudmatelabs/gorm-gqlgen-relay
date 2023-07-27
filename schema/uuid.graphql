@@ -1,7 +1,4 @@
 input UUIDFilter {
-  not: UUIDFilter
-  and: [UUIDFilter!]
-  or: [UUIDFilter!]
   equal: UUID
   notEqual: UUID
   in: [UUID!]

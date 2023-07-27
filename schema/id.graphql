@@ -1,7 +1,4 @@
 input IDFilter {
-  not: IDFilter
-  and: [IDFilter!]
-  or: [IDFilter!]
   equal: ID
   equalFold: ID
   notEqual: ID
