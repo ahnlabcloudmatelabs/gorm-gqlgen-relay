@@ -25,7 +25,9 @@ func Resolver[Model any](db *gorm.DB, model *Model, option ResolverProps) (conne
 	db, _ = cursor.Before(db, option.Before, orderBy)
 	totalCount := count.Count(db, model)
 
-	// db = relay.SetFirst(db, props.First)
+	if option.First != nil {
+		db = db.Limit(*option.First)
+	}
 	db = order.OrderBy(db, orderBy, "posts")
 
 	var currentCount int64
