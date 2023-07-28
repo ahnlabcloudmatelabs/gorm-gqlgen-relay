@@ -22,8 +22,8 @@ func OrderBy(db *gorm.DB, orderBy any, tableName string) *gorm.DB {
 	return db
 }
 
-func ParseOrderBy(orderBy any) []map[string]any {
-	filter := []map[string]any{}
+func ParseOrderBy(orderBy any) []map[string]string {
+	filter := []map[string]string{}
 	data, _ := json.Marshal(orderBy)
 	json.Unmarshal(data, &filter)
 
