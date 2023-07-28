@@ -1,6 +1,10 @@
 package filters
 
-import "github.com/cloudmatelabs/gorm-gqlgen-relay/query"
+import (
+	"reflect"
+
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/query"
+)
 
 func createQuery(field string, filter Filter[any]) (queryString string, values []any) {
 	query.Equal(field, filter.Equal, &queryString, &values)
@@ -20,4 +24,17 @@ func createQuery(field string, filter Filter[any]) (queryString string, values [
 	appendStringIDQuery(field, filter.HasPrefix, &queryString, &values, query.HasPrefix)
 	appendStringIDQuery(field, filter.HasSuffix, &queryString, &values, query.HasSuffix)
 	return
+}
+
+func appendStringIDQuery(field string, input *any, queryString *string, values *[]any, callback func(string, *string, *string, *[]any)) {
+	if input == nil {
+		return
+	}
+
+	if reflect.ValueOf(*input).Kind() != reflect.String {
+		return
+	}
+
+	value := (*input).(string)
+	callback(field, &value, queryString, values)
 }
