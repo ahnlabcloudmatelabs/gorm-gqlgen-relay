@@ -6,11 +6,12 @@ import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/count"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/cursor"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/filters"
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/interfaces"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/order"
 	"gorm.io/gorm"
 )
 
-type Props struct {
+type ResolverProps struct {
 	DB      *gorm.DB
 	First   *int
 	Last    *int
@@ -20,7 +21,7 @@ type Props struct {
 	Filter  any
 }
 
-func Connection[Model, Connection any](props Props, model *Model, connection *Connection) {
+func Resolver[Model any](props ResolverProps, model *Model) (connection *interfaces.Connection[Model], err error) {
 	if props.Filter != nil {
 		filter := parseFilter(props.Filter)
 
@@ -40,31 +41,32 @@ func Connection[Model, Connection any](props Props, model *Model, connection *Co
 	orderBy := parseOrderBy(props.OrderBy)
 	props.DB, _ = cursor.After(props.DB, props.After, orderBy)
 	props.DB, _ = cursor.Before(props.DB, props.Before, orderBy)
-
 	totalCount := count.Count(props.DB, model)
 
 	// props.DB = relay.SetFirst(props.DB, props.First)
 	props.DB = order.OrderBy(props.DB, orderBy, "posts")
 
 	var currentCount int64
-	var rows []Model
-	props.DB.Model(model).Count(&currentCount).Debug().Find(&rows)
+	var rows []*Model
+	err = props.DB.Model(model).Count(&currentCount).Find(&rows).Error
+	if err != nil {
+		return
+	}
 
 	startCursor, endCursor, edges := cursor.Set(rows, orderBy)
 
-	result := map[string]any{
-		"totalCount": totalCount,
-		"edges":      edges,
-		"pageInfo": map[string]any{
-			"hasPreviousPage": currentCount > 0 && currentCount < totalCount,
-			"hasNextPage":     currentCount < totalCount && endCursor != nil,
-			"startCursor":     startCursor,
-			"endCursor":       endCursor,
+	connection = &interfaces.Connection[Model]{
+		TotalCount: int(totalCount),
+		Edges:      edges,
+		PageInfo: &interfaces.PageInfo{
+			HasPreviousPage: currentCount > 0 && currentCount < totalCount,
+			HasNextPage:     currentCount < totalCount && endCursor != nil,
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
 		},
 	}
 
-	data, _ := json.Marshal(result)
-	json.Unmarshal(data, connection)
+	return
 }
 
 func parseFilter(input any) (filter map[string]any) {
