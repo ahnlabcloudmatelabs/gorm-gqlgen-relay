@@ -36,3 +36,33 @@ func (filter *Filter[T]) Parse(input interface{}) error {
 
 	return json.Unmarshal(byteData, &filter)
 }
+
+func ParseFilterArray[T any](input any) ([]map[string]Filter[T], error) {
+	if filters, ok := input.([]map[string]Filter[T]); ok {
+		return filters, nil
+	}
+
+	data, _ := json.Marshal(input)
+
+	var filters []map[string]Filter[T]
+	if err := json.Unmarshal(data, &filters); err != nil {
+		return nil, err
+	}
+
+	return filters, nil
+}
+
+func ParseFilterMap[T any](input any) (map[string]Filter[T], error) {
+	if filters, ok := input.(map[string]Filter[T]); ok {
+		return filters, nil
+	}
+
+	data, _ := json.Marshal(input)
+
+	var filters map[string]Filter[T]
+	if err := json.Unmarshal(data, &filters); err != nil {
+		return nil, err
+	}
+
+	return filters, nil
+}
