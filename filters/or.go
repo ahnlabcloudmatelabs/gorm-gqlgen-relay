@@ -5,6 +5,10 @@ import (
 )
 
 func Or(db *gorm.DB, input any) (*gorm.DB, error) {
+	if input == nil {
+		return db, nil
+	}
+
 	filters, err := ParseFilterArray[any](input)
 	if err != nil {
 		return db, err
