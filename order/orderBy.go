@@ -8,7 +8,7 @@ import (
 )
 
 func OrderBy(db *gorm.DB, orderBy any, tableName string) *gorm.DB {
-	filter := parseOrderBy(orderBy)
+	filter := ParseOrderBy(orderBy)
 	if len(filter) == 0 {
 		return db
 	}
@@ -22,7 +22,7 @@ func OrderBy(db *gorm.DB, orderBy any, tableName string) *gorm.DB {
 	return db
 }
 
-func parseOrderBy(orderBy any) []map[string]any {
+func ParseOrderBy(orderBy any) []map[string]any {
 	filter := []map[string]any{}
 	data, _ := json.Marshal(orderBy)
 	json.Unmarshal(data, &filter)
