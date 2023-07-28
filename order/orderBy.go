@@ -7,16 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func OrderBy(db *gorm.DB, orderBy any, tableName string) *gorm.DB {
-	filter := ParseOrderBy(orderBy)
-	if len(filter) == 0 {
+func OrderBy(db *gorm.DB, orderBy []map[string]string, tableName string) *gorm.DB {
+	if len(orderBy) == 0 {
 		return db
 	}
 
 	prefix := tablePrefix(tableName)
 
-	for _, v := range filter {
-		db = db.Order(fmt.Sprintf("%s%s %s", prefix, v["field"], v["direction"]))
+	for _, order := range orderBy {
+		db = db.Order(fmt.Sprintf("%s%s %s", prefix, order["field"], order["direction"]))
 	}
 
 	return db

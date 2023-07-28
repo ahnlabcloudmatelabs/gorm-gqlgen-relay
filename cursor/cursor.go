@@ -5,17 +5,13 @@ import (
 	"encoding/json"
 	"reflect"
 	"strings"
-
-	"github.com/cloudmatelabs/gorm-gqlgen-relay/order"
 )
 
-func Set[Row, OrderBy, Edge any](rows []*Row, orderBy []*OrderBy, edges *[]*Edge) (*string, *string) {
-	_orderBy := order.ParseOrderBy(orderBy)
+func Set[T any](rows []T, orderBy []map[string]string) (*string, *string, []map[string]any) {
 	_edges := []map[string]interface{}{}
 
 	for _, row := range rows {
-		val := reflect.ValueOf(row).Elem()
-		cursor := generateCursor(_orderBy, val)
+		cursor := generateCursor(orderBy, reflect.ValueOf(row))
 		data, _ := json.Marshal(&cursor)
 		_edges = append(_edges, map[string]interface{}{
 			"node":   row,
@@ -23,26 +19,27 @@ func Set[Row, OrderBy, Edge any](rows []*Row, orderBy []*OrderBy, edges *[]*Edge
 		})
 	}
 
+	edges := []map[string]any{}
 	edgeData, _ := json.Marshal(&_edges)
 	json.Unmarshal(edgeData, &edges)
 
 	startCursor, endCursor := startEndCursor(_edges)
-	return startCursor, endCursor
+	return startCursor, endCursor, edges
 }
 
-func generateCursor(orderBy []map[string]string, val reflect.Value) []interface{} {
+func generateCursor(orderBy []map[string]string, row reflect.Value) []any {
 	if len(orderBy) == 0 {
-		return []interface{}{val.Type().Field(0).Name}
+		return []any{row.Type().Field(0).Name}
 	}
 
-	cursor := []interface{}{}
+	cursor := []any{}
 
 	for _, order := range orderBy {
-		for i := 0; i < val.NumField(); i++ {
-			field := val.Type().Field(i)
+		for i := 0; i < row.NumField(); i++ {
+			field := row.Type().Field(i)
 
-			if strings.ToLower(field.Name) == strings.ReplaceAll(order["field"], "_", "") {
-				cursor = append(cursor, val.Field(i).Interface())
+			if strings.ToLower(field.Name) == strings.ReplaceAll(order["field"], "_", "") || field.Name == order["field"] {
+				cursor = append(cursor, row.Field(i).Interface())
 				break
 			}
 		}
