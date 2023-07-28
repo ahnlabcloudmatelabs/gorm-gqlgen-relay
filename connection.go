@@ -32,6 +32,9 @@ func Connection[Model, Connection any](props Props, model *Model, connection *Co
 		if filter["or"] != nil {
 			props.DB, _ = filters.Or(props.DB, filter["or"])
 		}
+		if filter["not"] != nil {
+			props.DB, _ = filters.Not(props.DB, filter["not"])
+		}
 	}
 
 	orderBy := parseOrderBy(props.OrderBy)
