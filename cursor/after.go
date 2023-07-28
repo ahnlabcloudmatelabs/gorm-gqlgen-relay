@@ -6,12 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func After(db *gorm.DB, before *string, orderBy []map[string]string) (*gorm.DB, error) {
-	if before == nil {
+func After(db *gorm.DB, after *string, orderBy []map[string]string) (*gorm.DB, error) {
+	if after == nil {
 		return db, nil
 	}
 
-	cursor, err := decodeCursor(before)
+	cursor, err := decodeCursor(after)
 	if err != nil {
 		return nil, err
 	}

@@ -1,8 +1,6 @@
 package relay
 
 import (
-	"encoding/json"
-
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/count"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/cursor"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/filters"
@@ -12,7 +10,6 @@ import (
 )
 
 type ResolverProps struct {
-	DB      *gorm.DB
 	First   *int
 	Last    *int
 	After   *string
@@ -21,34 +18,19 @@ type ResolverProps struct {
 	Filter  any
 }
 
-func Resolver[Model any](props ResolverProps, model *Model) (connection *interfaces.Connection[Model], err error) {
-	if props.Filter != nil {
-		filter := parseFilter(props.Filter)
+func Resolver[Model any](db *gorm.DB, model *Model, option ResolverProps) (connection *interfaces.Connection[Model], err error) {
+	db = filters.Do(db, option.Filter)
+	orderBy := order.ParseOrderBy(option.OrderBy)
+	db, _ = cursor.After(db, option.After, orderBy)
+	db, _ = cursor.Before(db, option.Before, orderBy)
+	totalCount := count.Count(db, model)
 
-		props.DB, _ = filters.Where(props.DB, &filter)
-
-		if filter["and"] != nil {
-			props.DB, _ = filters.And(props.DB, filter["and"])
-		}
-		if filter["or"] != nil {
-			props.DB, _ = filters.Or(props.DB, filter["or"])
-		}
-		if filter["not"] != nil {
-			props.DB, _ = filters.Not(props.DB, filter["not"])
-		}
-	}
-
-	orderBy := parseOrderBy(props.OrderBy)
-	props.DB, _ = cursor.After(props.DB, props.After, orderBy)
-	props.DB, _ = cursor.Before(props.DB, props.Before, orderBy)
-	totalCount := count.Count(props.DB, model)
-
-	// props.DB = relay.SetFirst(props.DB, props.First)
-	props.DB = order.OrderBy(props.DB, orderBy, "posts")
+	// db = relay.SetFirst(db, props.First)
+	db = order.OrderBy(db, orderBy, "posts")
 
 	var currentCount int64
 	var rows []*Model
-	err = props.DB.Model(model).Count(&currentCount).Find(&rows).Error
+	err = db.Model(model).Count(&currentCount).Find(&rows).Error
 	if err != nil {
 		return
 	}
@@ -66,25 +48,5 @@ func Resolver[Model any](props ResolverProps, model *Model) (connection *interfa
 		},
 	}
 
-	return
-}
-
-func parseFilter(input any) (filter map[string]any) {
-	if input == nil {
-		return nil
-	}
-
-	data, _ := json.Marshal(input)
-	json.Unmarshal(data, &filter)
-	return
-}
-
-func parseOrderBy(input any) (orderBy []map[string]string) {
-	if input == nil {
-		return nil
-	}
-
-	data, _ := json.Marshal(input)
-	json.Unmarshal(data, &orderBy)
 	return
 }
