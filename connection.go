@@ -1,11 +1,9 @@
 package relay
 
 import (
-	"github.com/cloudmatelabs/gorm-gqlgen-relay/count"
-	"github.com/cloudmatelabs/gorm-gqlgen-relay/cursor"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/filters"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/interfaces"
-	"github.com/cloudmatelabs/gorm-gqlgen-relay/order"
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/paginate"
 	"gorm.io/gorm"
 )
 
@@ -18,37 +16,16 @@ type ResolverProps struct {
 	Filter  any
 }
 
-func Resolver[Model any](db *gorm.DB, model *Model, option ResolverProps) (connection *interfaces.Connection[Model], err error) {
+func Resolver[Model any](db *gorm.DB, model *Model, option ResolverProps) (*interfaces.Connection[Model], error) {
+	paginateOptions := paginate.Options{
+		First:  option.First,
+		Last:   option.Last,
+		After:  option.After,
+		Before: option.Before,
+	}
+
 	db = filters.Do(db, option.Filter)
-	orderBy := order.ParseOrderBy(option.OrderBy)
-	db, _ = cursor.After(db, option.After, orderBy)
-	db, _ = cursor.Before(db, option.Before, orderBy)
-	totalCount := count.Count(db, model)
+	connection, err := paginate.Paginate(db, *model, option.OrderBy, paginateOptions)
 
-	if option.First != nil {
-		db = db.Limit(*option.First)
-	}
-	db = order.OrderBy(db, orderBy, "posts")
-
-	var currentCount int64
-	var rows []*Model
-	err = db.Model(model).Count(&currentCount).Find(&rows).Error
-	if err != nil {
-		return
-	}
-
-	startCursor, endCursor, edges := cursor.Set(rows, orderBy)
-
-	connection = &interfaces.Connection[Model]{
-		TotalCount: int(totalCount),
-		Edges:      edges,
-		PageInfo: &interfaces.PageInfo{
-			HasPreviousPage: currentCount > 0 && currentCount < totalCount,
-			HasNextPage:     currentCount < totalCount && endCursor != nil,
-			StartCursor:     startCursor,
-			EndCursor:       endCursor,
-		},
-	}
-
-	return
+	return connection, err
 }

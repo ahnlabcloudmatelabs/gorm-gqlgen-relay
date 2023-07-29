@@ -1,4 +1,4 @@
-package cursor
+package paginate
 
 import (
 	"encoding/base64"
@@ -9,20 +9,23 @@ import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/interfaces"
 )
 
-func Set[T any](rows []*T, orderBy []map[string]string) (*string, *string, []*interfaces.Edge[T]) {
-	edges := []*interfaces.Edge[T]{}
+func Edges[Model any](rows []*Model, orderBy []map[string]string) ([]*interfaces.Edge[Model], error) {
+	edges := []*interfaces.Edge[Model]{}
 
 	for _, row := range rows {
-		cursor := generateCursor(orderBy, reflect.ValueOf(row))
-		data, _ := json.Marshal(&cursor)
-		edges = append(edges, &interfaces.Edge[T]{
+		cursor := generateCursor(orderBy, reflect.ValueOf(row).Elem())
+		data, err := json.Marshal(&cursor)
+		if err != nil {
+			return nil, err
+		}
+
+		edges = append(edges, &interfaces.Edge[Model]{
 			Node:   row,
 			Cursor: base64.StdEncoding.EncodeToString(data),
 		})
 	}
 
-	startCursor, endCursor := startEndCursor(edges)
-	return startCursor, endCursor, edges
+	return edges, nil
 }
 
 func generateCursor(orderBy []map[string]string, row reflect.Value) []any {
@@ -44,16 +47,4 @@ func generateCursor(orderBy []map[string]string, row reflect.Value) []any {
 	}
 
 	return cursor
-}
-
-func startEndCursor[T any](edges []*interfaces.Edge[T]) (startCursor, endCursor *string) {
-	if len(edges) > 0 {
-		_startCursor := edges[0].Cursor
-		_endCursor := edges[len(edges)-1].Cursor
-
-		startCursor = &_startCursor
-		endCursor = &_endCursor
-	}
-
-	return
 }
