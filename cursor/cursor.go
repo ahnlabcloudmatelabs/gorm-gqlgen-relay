@@ -1,4 +1,4 @@
-package paginate
+package cursor
 
 import (
 	"reflect"
@@ -7,7 +7,7 @@ import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
 )
 
-func createCursor[T any](row *T, fields []string, idColumn string) (string, error) {
+func Create[T any](row *T, fields []string, idColumn string) (string, error) {
 	reflectRow := reflect.ValueOf(*row)
 
 	if len(fields) == 0 {
