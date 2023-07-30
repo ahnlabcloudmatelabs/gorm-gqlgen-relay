@@ -36,11 +36,6 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 		return nil, err
 	}
 
-	orderBy, err := utils.ConvertToMap(_orderBy)
-	if err != nil {
-		return nil, err
-	}
-
 	w, err := where.Do(_where)
 	if err != nil {
 		return nil, err
@@ -51,6 +46,11 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 	var model Model
 	stmt.Model(&model).Count(&totalCount)
 
+	orderBy, err := utils.ConvertToMap(_orderBy)
+	if err != nil {
+		return nil, err
+	}
+
 	stmt, err = setAfter(stmt, option.After, orderBy, option.PrimaryKey)
 	if err != nil {
 		return nil, err
@@ -58,18 +58,6 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 	stmt, err = setBefore(stmt, option.Before, orderBy, option.PrimaryKey)
 	if err != nil {
 		return nil, err
-	}
-
-	if queries, args, err := cursor.After(option.After, orderBy, option.PrimaryKey); err != nil {
-		return nil, err
-	} else {
-		stmt = stmt.Where(queries, args...)
-	}
-
-	if queries, args, err := cursor.Before(option.Before, orderBy, option.PrimaryKey); err != nil {
-		return nil, err
-	} else {
-		stmt = stmt.Where(queries, args...)
 	}
 
 	orders, err := order.By(_orderBy, option.Last != nil)
@@ -135,7 +123,11 @@ func setAfter(db *gorm.DB, after *string, orderBy map[string]any, primaryKey str
 		return db, err
 	}
 
-	return db.Where(queries, args...), nil
+	for i := range queries {
+		db = db.Where(queries[i], args[i])
+	}
+
+	return db, err
 }
 
 func setBefore(db *gorm.DB, before *string, orderBy map[string]any, primaryKey string) (*gorm.DB, error) {
@@ -148,5 +140,9 @@ func setBefore(db *gorm.DB, before *string, orderBy map[string]any, primaryKey s
 		return db, err
 	}
 
-	return db.Where(queries, args...), nil
+	for i := range queries {
+		db = db.Where(queries[i], args[i])
+	}
+
+	return db, err
 }
