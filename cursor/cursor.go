@@ -7,12 +7,12 @@ import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
 )
 
-func Create[T any](row *T, fields []string, idColumn string) (string, error) {
+func Create[T any](row *T, fields []string, primaryKey string) (string, error) {
 	reflectRow := reflect.ValueOf(*row)
 
 	if len(fields) == 0 {
 		return utils.MapToBase64(map[string]any{
-			idColumn: reflectRow.FieldByNameFunc(fieldWithColumnIsEqual(idColumn)).String(),
+			primaryKey: reflectRow.FieldByNameFunc(fieldWithColumnIsEqual(primaryKey)).String(),
 		})
 	}
 

@@ -7,11 +7,11 @@ type Edge[T any] struct {
 	Node   *T
 }
 
-func Convert[T any](rows []*T, fields []string, idColumn string) ([]*Edge[T], error) {
+func Convert[T any](rows []*T, fields []string, primaryKey string) ([]*Edge[T], error) {
 	edges := make([]*Edge[T], 0, len(rows))
 
 	for _, row := range rows {
-		cursor, err := cursor.Create(row, fields, idColumn)
+		cursor, err := cursor.Create(row, fields, primaryKey)
 		if err != nil {
 			return nil, err
 		}
