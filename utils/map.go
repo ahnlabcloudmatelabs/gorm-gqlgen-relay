@@ -24,3 +24,13 @@ func MapToBase64(src map[string]any) (string, error) {
 
 	return base64.StdEncoding.EncodeToString(data), nil
 }
+
+func Keys(m map[string]any) []string {
+	keys := make([]string, 0, len(m))
+
+	for key := range m {
+		keys = append(keys, key)
+	}
+
+	return keys
+}
