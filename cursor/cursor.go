@@ -27,11 +27,6 @@ func Create[T any](row *T, fields []string, primaryKey string) (string, error) {
 
 func fieldWithColumnIsEqual(field string) func(key string) bool {
 	return func(key string) bool {
-		lower := strings.ToLower(key)
-		if lower == field {
-			return true
-		}
-
-		return strings.ReplaceAll(lower, "_", "") == field
+		return strings.ToLower(key) == strings.ReplaceAll(field, "_", "")
 	}
 }
