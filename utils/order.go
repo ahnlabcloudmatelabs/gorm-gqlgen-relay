@@ -15,3 +15,23 @@ func ReverseDirection(direction string) string {
 
 	return "ASC"
 }
+
+func ReverseInequality(inequality string) string {
+	if inequality == ">" {
+		return "<"
+	}
+
+	if inequality == "<" {
+		return ">"
+	}
+
+	if inequality == ">=" {
+		return "<="
+	}
+
+	if inequality == "<=" {
+		return ">="
+	}
+
+	return inequality
+}
