@@ -1,6 +1,27 @@
 package where
 
-import "github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
+import (
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
+	"gorm.io/gorm"
+)
+
+func Traverse(db *gorm.DB, where Where) *gorm.DB {
+	stmt := db.Where(where.Query, where.Args...)
+
+	if where.Not != nil {
+		stmt = stmt.Not(where.Not.Query, where.Not.Args...)
+	}
+
+	for _, and := range where.And {
+		stmt = stmt.Where(Traverse(db, and))
+	}
+
+	for _, or := range where.Or {
+		stmt = stmt.Or(Traverse(db, or))
+	}
+
+	return stmt
+}
 
 func traverse(input map[string]any) (where Where) {
 	for key, value := range input {
