@@ -11,8 +11,8 @@ type Where struct {
 	Args  []any
 }
 
-func Do(where any) (Where, error) {
-	filter, err := utils.ConvertToMap(where)
+func Do(input any) (Where, error) {
+	filter, err := utils.ConvertToMap(input)
 	if err != nil {
 		return Where{}, err
 	}
