@@ -7,8 +7,8 @@ import (
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
 )
 
-func createCursor[T any](row T, fields []string, idColumn string) (string, error) {
-	reflectRow := reflect.ValueOf(row)
+func createCursor[T any](row *T, fields []string, idColumn string) (string, error) {
+	reflectRow := reflect.ValueOf(*row)
 
 	if len(fields) == 0 {
 		return utils.MapToBase64(map[string]any{
