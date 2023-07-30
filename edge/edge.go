@@ -3,8 +3,8 @@ package edge
 import "github.com/cloudmatelabs/gorm-gqlgen-relay/cursor"
 
 type Edge[T any] struct {
-	Cursor string
-	Node   *T
+	Cursor string `json:"cursor"`
+	Node   *T     `json:"node"`
 }
 
 func Convert[T any](rows []*T, fields []string, primaryKey string) ([]*Edge[T], error) {
