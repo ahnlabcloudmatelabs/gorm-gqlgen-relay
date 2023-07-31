@@ -84,7 +84,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 		return nil, err
 	}
 
-	pageInfo := PageInfo{
+	pageInfo := &PageInfo{
 		HasNextPage: func() bool {
 			if option.First == nil {
 				return false
@@ -109,33 +109,33 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 	return &Connection[Model]{
 		TotalCount: totalCount,
 		Edges:      edges,
-		PageInfo:   &pageInfo,
+		PageInfo:   pageInfo,
 	}, nil
 }
 
 func setAfter(db *gorm.DB, after *string, orderBy map[string]any, primaryKey string) (*gorm.DB, error) {
-	if after == nil {
-		return db, nil
-	}
-
-	queries, args, err := cursor.After(after, orderBy, primaryKey)
-	if err != nil {
-		return db, err
-	}
-
-	for i := range queries {
-		db = db.Where(queries[i], args[i])
-	}
-
-	return db, err
+	return setCursor(db, after, "after", orderBy, primaryKey)
 }
 
 func setBefore(db *gorm.DB, before *string, orderBy map[string]any, primaryKey string) (*gorm.DB, error) {
-	if before == nil {
+	return setCursor(db, before, "before", orderBy, primaryKey)
+}
+
+func setCursor(db *gorm.DB, cur *string, direction string, orderBy map[string]any, primaryKey string) (*gorm.DB, error) {
+	if cur == nil {
 		return db, nil
 	}
 
-	queries, args, err := cursor.Before(before, orderBy, primaryKey)
+	var queries []string
+	var args []any
+	var err error
+
+	if direction == "after" {
+		queries, args, err = cursor.After(cur, orderBy, primaryKey)
+	} else {
+		queries, args, err = cursor.Before(cur, orderBy, primaryKey)
+	}
+
 	if err != nil {
 		return db, err
 	}
