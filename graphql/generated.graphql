@@ -122,3 +122,10 @@ input MapInEntry {
   key: String!
   value: [Object!]
 }
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
