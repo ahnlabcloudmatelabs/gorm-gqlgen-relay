@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"embed"
 	"io/fs"
 	"os"
@@ -12,32 +13,30 @@ import (
 //go:embed graphql
 var schemas embed.FS
 
+//go:embed model
+var models embed.FS
+
 type gqlgenConfig struct {
-	Exec *struct {
+	Schema []string `yaml:"schema"`
+	Model  *struct {
 		Package  string `yaml:"package"`
 		Filename string `yaml:"filename"`
-	} `yaml:"exec,omitempty"`
-	Schema []string `yaml:"schema"`
+	}
 }
 
 func main() {
 	config := readConfigFile()
 	generateSchema(config)
+	generateModel(config)
 }
 
 func generateSchema(config gqlgenConfig) {
 	dir, _ := schemas.ReadDir("graphql")
 	schemaDir := getSchemaDir(config)
 
-	for _, path := range config.Schema {
-		if strings.Contains(path, "*.graphql") {
-			for _, f := range dir {
-				contents, _ := fs.ReadFile(schemas, "graphql/"+f.Name())
-				os.WriteFile(schemaDir+"gorm-gqlgen-relay-"+f.Name(), contents, fs.ModePerm)
-			}
-
-			return
-		}
+	for _, f := range dir {
+		contents, _ := fs.ReadFile(schemas, "graphql/"+f.Name())
+		os.WriteFile(schemaDir+"gorm-gqlgen-relay-"+f.Name(), contents, fs.ModePerm)
 	}
 }
 
@@ -70,4 +69,28 @@ func parseConfigFile(contents []byte) (config gqlgenConfig) {
 	}
 
 	return
+}
+
+func generateModel(config gqlgenConfig) {
+	dir, _ := models.ReadDir("model")
+	modelDir := getModelDir(config)
+
+	for _, f := range dir {
+		contents, _ := fs.ReadFile(models, "model/"+f.Name())
+		os.WriteFile(
+			modelDir+"/gorm-gqlgen-relay-"+f.Name(),
+			bytes.Replace(contents, []byte("package model"), []byte("package "+config.Model.Package), 1),
+			fs.ModePerm,
+		)
+	}
+}
+
+func getModelDir(config gqlgenConfig) string {
+	if config.Model == nil {
+		return "./graph/model/"
+	}
+
+	split := strings.Split(config.Model.Filename, "/")
+	split = split[:len(split)-1]
+	return strings.Join(split, "/")
 }
