@@ -82,20 +82,8 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 	}
 
 	pageInfo := &PageInfo{
-		HasNextPage: func() bool {
-			if option.First == nil {
-				return false
-			}
-
-			return totalCount > 0 && totalCount > int64(*option.First)
-		}(),
-		HasPreviousPage: func() bool {
-			if option.Last == nil {
-				return false
-			}
-
-			return totalCount > 0 && totalCount > int64(*option.Last)
-		}(),
+		HasNextPage:     hasNextPage(totalCount, option.First, edges),
+		HasPreviousPage: hasPreviousPage(totalCount, option.Last, edges),
 	}
 
 	if len(edges) > 0 {
@@ -142,4 +130,24 @@ func setCursor(db *gorm.DB, cur *string, direction string, orderBy map[string]an
 	}
 
 	return db, err
+}
+
+func hasNextPage[T any](totalCount int64, first *int, edges []*edge.Edge[T]) bool {
+	currentCount := len(edges)
+
+	if first == nil {
+		return totalCount > int64(currentCount)
+	}
+
+	return currentCount > *first
+}
+
+func hasPreviousPage[T any](totalCount int64, last *int, edges []*edge.Edge[T]) bool {
+	currentCount := len(edges)
+
+	if last == nil {
+		return totalCount > int64(currentCount)
+	}
+
+	return currentCount > *last
 }
