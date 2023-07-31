@@ -13,7 +13,7 @@ var input = map[string]any{
 }
 
 func TestOrder(t *testing.T) {
-	query, err := order.By(input, false)
+	query, err := order.By("sample", input, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,17 +22,17 @@ func TestOrder(t *testing.T) {
 		t.Fatal("query length should be 2")
 	}
 
-	if !slices.Contains(query, "field1 ASC") {
-		t.Fatal("query should contain field1 ASC")
+	if !slices.Contains(query, "sample.field1 ASC") {
+		t.Fatal("query should contain sample.field1 ASC")
 	}
 
-	if !slices.Contains(query, "field2 DESC") {
-		t.Fatal("query should contain field2 DESC")
+	if !slices.Contains(query, "sample.field2 DESC") {
+		t.Fatal("query should contain sample.field2 DESC")
 	}
 }
 
 func TestReverseOrder(t *testing.T) {
-	query, err := order.By(input, true)
+	query, err := order.By("", input, true)
 	if err != nil {
 		t.Fatal(err)
 	}

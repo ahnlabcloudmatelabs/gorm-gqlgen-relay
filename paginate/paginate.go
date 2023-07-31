@@ -14,7 +14,7 @@ type Option struct {
 	Last       *int
 	After      *string
 	Before     *string
-	Table      *string
+	Table      string
 	PrimaryKey string
 }
 
@@ -60,7 +60,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 		return nil, err
 	}
 
-	orders, err := order.By(_orderBy, option.Last != nil)
+	orders, err := order.By(option.Table, _orderBy, option.Last != nil)
 	if err != nil {
 		return nil, err
 	}
