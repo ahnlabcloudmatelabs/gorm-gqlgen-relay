@@ -21,7 +21,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 		return nil, err
 	}
 
-	w, err := where.Do(_where)
+	w, err := where.Do(db.Dialector.Name(), _where)
 	if err != nil {
 		return nil, err
 	}

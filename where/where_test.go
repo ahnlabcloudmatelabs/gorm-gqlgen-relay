@@ -38,7 +38,7 @@ func TestWhere(t *testing.T) {
 		},
 	}
 
-	filter, err := where.Do(query)
+	filter, err := where.Do("mysql", query)
 	if err != nil {
 		t.Error(err)
 	}

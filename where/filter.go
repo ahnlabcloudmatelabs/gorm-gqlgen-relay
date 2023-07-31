@@ -1,9 +1,18 @@
 package where
 
-import "github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
+import (
+	"fmt"
+	"strings"
 
-func filter(column string, input map[string]any) (query string, args []any) {
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
+)
+
+func filter(dialector, column string, input map[string]any) (query string, args []any) {
 	for key, value := range input {
+		if strings.Contains((fmt.Sprintf("%T", value)), "map[string]") {
+			return mapFilter(dialector, column, key, value.(map[string]any))
+		}
+
 		switch key {
 		case "equal":
 			query = utils.AppendQuery(query, column+" = ?")

@@ -23,28 +23,28 @@ func Traverse(db *gorm.DB, where Where) *gorm.DB {
 	return stmt
 }
 
-func traverse(input map[string]any) (where Where) {
+func traverse(dialector string, input map[string]any) (where Where) {
 	for key, value := range input {
 		if key == "and" {
 			for _, v := range value.([]any) {
-				where.And = append(where.And, traverse(v.(map[string]any)))
+				where.And = append(where.And, traverse(dialector, v.(map[string]any)))
 			}
 			continue
 		}
 
 		if key == "or" {
 			for _, v := range value.([]any) {
-				where.Or = append(where.Or, traverse(v.(map[string]any)))
+				where.Or = append(where.Or, traverse(dialector, v.(map[string]any)))
 			}
 			continue
 		}
 
 		if key == "not" {
-			where.Not = utils.ToPointer(traverse(value.(map[string]any)))
+			where.Not = utils.ToPointer(traverse(dialector, value.(map[string]any)))
 			continue
 		}
 
-		query, args := filter(key, value.(map[string]any))
+		query, args := filter(dialector, key, value.(map[string]any))
 		where.Query = utils.AppendQuery(where.Query, query)
 		where.Args = append(where.Args, args...)
 	}
