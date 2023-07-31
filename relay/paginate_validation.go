@@ -1,4 +1,4 @@
-package paginate
+package relay
 
 import (
 	"encoding/base64"

@@ -1,13 +1,8 @@
-package edge
+package relay
 
 import "github.com/cloudmatelabs/gorm-gqlgen-relay/cursor"
 
-type Edge[T any] struct {
-	Cursor string `json:"cursor"`
-	Node   *T     `json:"node"`
-}
-
-func Convert[T any](rows []*T, fields []string, primaryKey string) ([]*Edge[T], error) {
+func convertToEdge[T any](rows []*T, fields []string, primaryKey string) ([]*Edge[T], error) {
 	edges := make([]*Edge[T], 0, len(rows))
 
 	for _, row := range rows {

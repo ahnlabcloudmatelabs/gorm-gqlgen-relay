@@ -1,4 +1,4 @@
-package paginate
+package relay
 
 import "gorm.io/gorm"
 
