@@ -1,13 +1,15 @@
 package paginate
 
-func limit(first, last *int) *int {
+import "gorm.io/gorm"
+
+func limit(db *gorm.DB, first, last *int) *gorm.DB {
 	if first != nil {
-		return first
+		return db.Limit(*first)
 	}
 
 	if last != nil {
-		return last
+		return db.Limit(*last)
 	}
 
-	return nil
+	return db
 }

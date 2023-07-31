@@ -69,10 +69,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option Option) (
 		stmt = stmt.Order(order)
 	}
 
-	_limit := limit(option.First, option.Last)
-	if _limit != nil {
-		stmt = stmt.Limit(*_limit)
-	}
+	stmt = limit(stmt, option.First, option.Last)
 
 	var rows []*Model
 	if err := stmt.Find(&rows).Error; err != nil {
