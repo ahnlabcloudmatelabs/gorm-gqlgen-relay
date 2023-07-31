@@ -49,6 +49,12 @@ input FloatFilter {
   isNull: Boolean
 }
 
+input BooleanFilter {
+  equal: Boolean
+  notEqual: Boolean
+  isNull: Boolean
+}
+
 input TimeFilter {
   equal: Time
   notEqual: Time

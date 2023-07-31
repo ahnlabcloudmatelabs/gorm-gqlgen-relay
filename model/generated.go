@@ -7,9 +7,13 @@ import (
 
 type PageInfo = relay.PageInfo
 
-type IDFilter = filters.IDFilter
-type IntFilter = filters.IntFilter
-type MapFilter = filters.MapFilter
 type StringFilter = filters.StringFilter
+type IntFilter = filters.IntFilter
+type FloatFilter = filters.FloatFilter
+type BooleanFilter = filters.BooleanFilter
 type TimeFilter = filters.TimeFilter
 type UUIDFilter = filters.UUIDFilter
+type IDFilter = filters.IDFilter
+type MapFilter = filters.MapFilter
+type MapEntry = filters.MapEntry
+type MapInEntry = filters.MapInEntry

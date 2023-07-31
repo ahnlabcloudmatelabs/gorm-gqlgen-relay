@@ -43,6 +43,12 @@ type FloatFilter struct {
 	IsNull             *bool     `json:"isNull,omitempty"`
 }
 
+type BooleanFilter struct {
+	Equal    *bool `json:"equal,omitempty"`
+	NotEqual *bool `json:"notEqual,omitempty"`
+	IsNull   *bool `json:"isNull,omitempty"`
+}
+
 type IDFilter struct {
 	Equal              *string  `json:"equal,omitempty"`
 	EqualFold          *string  `json:"equalFold,omitempty"`
