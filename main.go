@@ -16,6 +16,8 @@ var schemas embed.FS
 //go:embed model
 var models embed.FS
 
+var graphqlExtension = ".graphql"
+
 type gqlgenConfig struct {
 	Schema []string `yaml:"schema"`
 	Model  *struct {
@@ -36,18 +38,25 @@ func generateSchema(config gqlgenConfig) {
 	schemaDir := getSchemaDir(config)
 
 	for _, f := range dir {
-		contents, _ := fs.ReadFile(schemas, "graphql/"+f.Name())
-		os.WriteFile(schemaDir+"gorm-gqlgen-relay-"+f.Name(), contents, fs.ModePerm)
+		filename := strings.Replace(f.Name(), ".graphql", graphqlExtension, 1)
+		contents, _ := fs.ReadFile(schemas, "graphql/"+filename)
+		os.WriteFile(schemaDir+"gorm-gqlgen-relay-"+filename, contents, fs.ModePerm)
 	}
 }
 
 func getSchemaDir(config gqlgenConfig) string {
 	for _, path := range config.Schema {
-		strings.Contains(path, "*.graphql")
-		return strings.Replace(path, "*.graphql", "", 1)
+		if strings.Contains(path, "*.graphql") {
+			return strings.Replace(path, "*.graphql", "", 1)
+		}
+
+		if strings.Contains(path, "*.graphqls") {
+			graphqlExtension = ".graphqls"
+			return strings.Replace(path, "*.graphqls", "", 1)
+		}
 	}
 
-	panic("No schema directory found (schema: *.graphql)")
+	panic("No schema directory found (schema: *.graphql or *.graphqls)")
 }
 
 func readConfigFile() gqlgenConfig {
