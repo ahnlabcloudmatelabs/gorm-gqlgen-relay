@@ -13,6 +13,21 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// Todos is the resolver for the todos field.
+func (r *queryResolver) Todos(ctx context.Context, first *int, after *string, last *int, before *string, orderBy map[string]interface{}, where *model.TodoFilter) (*relay.Connection[model.Todo], error) {
+	context := customContext.GetContext(ctx)
+	db := context.Database.Preload("User")
+
+	return relay.Paginate[model.Todo](db, where, orderBy, relay.PaginateOption{
+		First:      first,
+		After:      after,
+		Last:       last,
+		Before:     before,
+		Table:      "todos",
+		PrimaryKey: "id",
+	})
+}
+
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	context := customContext.GetContext(ctx)
@@ -33,21 +48,6 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	err := db.Create(todo).Error
 
 	return todo, err
-}
-
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context, first *int, after *string, last *int, before *string, orderBy map[string]interface{}, where *model.TodoFilter) (*relay.Connection[model.Todo], error) {
-	context := customContext.GetContext(ctx)
-	db := context.Database.Preload("User")
-
-	return relay.Paginate[model.Todo](db, where, orderBy, relay.PaginateOption{
-		First:      first,
-		After:      after,
-		Last:       last,
-		Before:     before,
-		Table:      "todos",
-		PrimaryKey: "id",
-	})
 }
 
 // Mutation returns MutationResolver implementation.
