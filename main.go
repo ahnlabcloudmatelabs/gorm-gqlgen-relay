@@ -22,6 +22,7 @@ type gqlgenConfig struct {
 		Package  string `yaml:"package"`
 		Filename string `yaml:"filename"`
 	}
+	AutoBind []string `yaml:"autobind"`
 }
 
 func main() {
@@ -46,7 +47,7 @@ func getSchemaDir(config gqlgenConfig) string {
 		return strings.Replace(path, "*.graphql", "", 1)
 	}
 
-	panic("No schema directory found")
+	panic("No schema directory found (schema: *.graphql)")
 }
 
 func readConfigFile() gqlgenConfig {
@@ -66,6 +67,10 @@ func readConfigFile() gqlgenConfig {
 func parseConfigFile(contents []byte) (config gqlgenConfig) {
 	if err := yaml.Unmarshal(contents, &config); err != nil {
 		panic(err)
+	}
+
+	if config.AutoBind == nil || len(config.AutoBind) == 0 {
+		panic("No autobind files found")
 	}
 
 	return
