@@ -65,7 +65,9 @@ func (r *queryResolver) Todos(ctx context.Context, first *int, after *string, la
 		Last:       last,
 		Before:     before,
 		Table:      "todos",
-		PrimaryKey: "id",
+    // If you using joins table
+    // Tables:   &map[string]string{"id": "todos", "user_id": "users"},
+		PrimaryKey: "id", // or "todos.id"
 	})
 }
 ```
@@ -129,6 +131,7 @@ package main
 | After | string | A cursor for use in pagination, which is a base-64 encoded string that points to a specific page in the dataset. |
 | Before | string | A cursor for use in pagination, which is a base-64 encoded string that points to a specific page in the dataset. |
 | Table | string | Table name (optional) |
+| Tables | *map[string]string | Table names (optional) |
 | PrimaryKey | string | Primary key name (optional) |
 
 ## Execute example

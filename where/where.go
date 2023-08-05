@@ -11,11 +11,11 @@ type Where struct {
 	Args  []any
 }
 
-func Do(dialector string, input any) (Where, error) {
+func Do(dialector, table string, tables *map[string]string, input any) (Where, error) {
 	filter, err := utils.ConvertToMap(input)
 	if err != nil {
 		return Where{}, err
 	}
 
-	return traverse(dialector, filter), nil
+	return traverse(dialector, table, tables, filter), nil
 }
