@@ -93,3 +93,45 @@ func TestSetNextPage_After_IsNil_Last_IsNil_TotalCount_GreaterThan_Last(t *testi
 		t.Errorf("Expected HasNextPage to be true")
 	}
 }
+
+func TestSetNextPage_First_Equals_EdgesLen(t *testing.T) {
+	first := 5
+	p := relay.PageInfo{}
+	p.SetHasNextPage(10, 5, &first, nil, nil, nil)
+
+	if !p.HasNextPage {
+		t.Errorf("Expected HasNextPage to be true")
+	}
+}
+
+func TestSetNextPage_First_Equals_EdgesLen_With_After(t *testing.T) {
+	first := 5
+	after := "eyJpZCI6MX0="
+	p := relay.PageInfo{}
+	p.SetHasNextPage(10, 5, &first, nil, nil, &after)
+
+	if !p.HasNextPage {
+		t.Errorf("Expected HasNextPage to be true")
+	}
+}
+
+func TestSetNextPage_Last_Equals_EdgesLen(t *testing.T) {
+	last := 5
+	p := relay.PageInfo{}
+	p.SetHasNextPage(10, 5, nil, &last, nil, nil)
+
+	if !p.HasNextPage {
+		t.Errorf("Expected HasNextPage to be true")
+	}
+}
+
+func TestSetNextPage_Last_Equals_EdgesLen_With_After(t *testing.T) {
+	last := 5
+	after := "eyJpZCI6MX0="
+	p := relay.PageInfo{}
+	p.SetHasNextPage(10, 5, nil, &last, nil, &after)
+
+	if !p.HasNextPage {
+		t.Errorf("Expected HasNextPage to be true")
+	}
+}
