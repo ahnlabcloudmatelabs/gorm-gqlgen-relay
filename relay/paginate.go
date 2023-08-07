@@ -69,14 +69,15 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 		return nil, err
 	}
 
-	pageInfo := &PageInfo{
-		HasNextPage:     hasNextPage(totalCount, option.First, edges),
-		HasPreviousPage: hasPreviousPage(totalCount, option.Last, edges),
-	}
+	pageInfo := &PageInfo{}
+	_totalCount := int(totalCount)
+	edgesLen := len(edges)
+	pageInfo.SetHasPreviousPage(_totalCount, edgesLen, option.After)
+	pageInfo.SetHasNextPage(_totalCount, edgesLen, option.First, option.Last, option.Before, option.After)
 
-	if len(edges) > 0 {
+	if edgesLen > 0 {
 		pageInfo.StartCursor = &edges[0].Cursor
-		pageInfo.EndCursor = &edges[len(edges)-1].Cursor
+		pageInfo.EndCursor = &edges[edgesLen-1].Cursor
 	}
 
 	return &Connection[Model]{
