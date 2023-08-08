@@ -48,7 +48,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 		return nil, err
 	}
 
-	orders, err := order.By(option.Table, _orderBy, option.Last != nil)
+	orders, err := order.By(option.Table, option.Tables, _orderBy, option.Last != nil)
 	if err != nil {
 		return nil, err
 	}
