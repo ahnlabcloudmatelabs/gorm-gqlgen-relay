@@ -5,6 +5,21 @@ import (
 	"encoding/json"
 )
 
+func ConvertToMapString(src any) (map[string]string, error) {
+	if _, ok := src.(map[string]string); ok {
+		return src.(map[string]string), nil
+	}
+
+	data, err := json.Marshal(src)
+	if err != nil {
+		return nil, err
+	}
+
+	dest := make(map[string]string)
+	err = json.Unmarshal(data, &dest)
+	return dest, err
+}
+
 func ConvertToMap(src any) (map[string]any, error) {
 	data, err := json.Marshal(src)
 	if err != nil {
