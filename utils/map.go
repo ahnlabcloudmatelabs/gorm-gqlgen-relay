@@ -20,6 +20,21 @@ func ConvertToMapString(src any) (map[string]string, error) {
 	return dest, err
 }
 
+func ConvertToMapAny(src any) (map[string]any, error) {
+	if _, ok := src.(map[string]any); ok {
+		return src.(map[string]any), nil
+	}
+
+	data, err := json.Marshal(src)
+	if err != nil {
+		return nil, err
+	}
+
+	dest := make(map[string]any)
+	err = json.Unmarshal(data, &dest)
+	return dest, err
+}
+
 func ConvertToMap(src any) (map[string]any, error) {
 	data, err := json.Marshal(src)
 	if err != nil {
