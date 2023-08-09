@@ -10,16 +10,16 @@ func traverse(table string, tables *map[string]string, filter map[string]any, re
 
 		prefix := ""
 
+		if table != "" {
+			prefix = table + "."
+		}
+
 		if tables != nil {
 			for k, v := range *tables {
 				if k == field {
 					prefix = v + "."
 					break
 				}
-			}
-		} else {
-			if table != "" {
-				prefix = table + "."
 			}
 		}
 

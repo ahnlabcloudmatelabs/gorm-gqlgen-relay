@@ -46,16 +46,16 @@ func traverse(dialector, table string, tables *map[string]string, input map[stri
 
 		prefix := ""
 
+		if table != "" {
+			prefix = table + "."
+		}
+
 		if tables != nil {
 			for k, v := range *tables {
 				if k == key {
 					prefix = v + "."
 					break
 				}
-			}
-		} else {
-			if table != "" {
-				prefix = table + "."
 			}
 		}
 
