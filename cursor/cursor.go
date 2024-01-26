@@ -12,7 +12,7 @@ func Create[T any](row *T, fields []string, primaryKey string) (string, error) {
 
 	if len(fields) == 0 {
 		return utils.MapToBase64(map[string]any{
-			primaryKey: reflectRow.FieldByNameFunc(fieldWithColumnIsEqual(primaryKey)).String(),
+			primaryKey: reflectRow.FieldByNameFunc(fieldWithColumnIsEqual(primaryKey)).Interface(),
 		})
 	}
 
