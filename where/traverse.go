@@ -1,6 +1,8 @@
 package where
 
 import (
+	"fmt"
+
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
 	"gorm.io/gorm"
 )
@@ -25,6 +27,10 @@ func Traverse(db *gorm.DB, where Where) *gorm.DB {
 
 func traverse(dialector, table string, tables *map[string]string, input map[string]any) (where Where) {
 	for key, value := range input {
+		if value == nil {
+			continue
+		}
+
 		if key == "and" {
 			for _, v := range value.([]any) {
 				where.And = append(where.And, traverse(dialector, table, tables, v.(map[string]any)))
@@ -47,19 +53,35 @@ func traverse(dialector, table string, tables *map[string]string, input map[stri
 		prefix := ""
 
 		if table != "" {
-			prefix = table + "."
+			prefix = "\"" + table + "\"" + "."
 		}
 
 		if tables != nil {
 			for k, v := range *tables {
 				if k == key {
-					prefix = v + "."
+					prefix = "\"" + v + "\"" + "."
 					break
 				}
 			}
 		}
+		key = "\"" + key + "\""
+		_value, ok := value.(map[string]any)
 
-		query, args := filter(dialector, prefix+key, value.(map[string]any))
+		if !ok {
+			fmt.Println("Conversion failed: value is not of type map[string]any")
+			return
+		}
+
+		nonNilValues := map[string]any{}
+
+		for k, v := range _value {
+			if v == nil {
+				continue
+			}
+			nonNilValues[k] = v
+		}
+
+		query, args := filter(dialector, prefix+key, nonNilValues)
 		where.Query = utils.AppendQuery(where.Query, query)
 		where.Args = append(where.Args, args...)
 	}
