@@ -29,7 +29,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 
 	stmt := where.Traverse(db, w)
 
-	totalCount, err := getTotalCount[Model](db)
+	totalCount, err := getTotalCount[Model](db, w)
 	if err != nil {
 		return nil, err
 	}
