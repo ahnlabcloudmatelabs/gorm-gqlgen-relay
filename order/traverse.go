@@ -11,18 +11,18 @@ func traverse(table string, tables *map[string]string, filter map[string]any, re
 		prefix := ""
 
 		if table != "" {
-			prefix = table + "."
+			prefix = "\"" + table + "\"" + "."
 		}
 
 		if tables != nil {
 			for k, v := range *tables {
 				if k == field {
-					prefix = v + "."
+					prefix = "\"" + v + "\"" + "."
 					break
 				}
 			}
 		}
-
+		field = "\"" + field + "\""
 		orders = append(orders, prefix+field+" "+direction.(string))
 	}
 	return

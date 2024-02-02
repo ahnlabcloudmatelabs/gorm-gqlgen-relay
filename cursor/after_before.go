@@ -31,7 +31,7 @@ func loadCursor(defaultInequality string) func(cursor *string, orderBy map[strin
 
 		for field, value := range _cursor {
 			direction := orderBy[field].(string)
-			queries = append(queries, fmt.Sprintf("%s %s ?", field, inequality(defaultInequality, direction)))
+			queries = append(queries, fmt.Sprintf("\"%s\" %s ?", field, inequality(defaultInequality, direction)))
 			args = append(args, value)
 		}
 		return
