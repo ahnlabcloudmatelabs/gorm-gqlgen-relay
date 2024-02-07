@@ -11,8 +11,8 @@ func (p *PageInfo) SetHasPreviousPage(totalCount, edgesLen int, after *string) {
 	}
 }
 
-func (p *PageInfo) SetHasNextPage(totalCount, edgesLen int, first, last *int, before, after *string) {
-	if totalCount == 0 || totalCount == edgesLen {
+func (p *PageInfo) SetHasNextPage(remainingCount, edgesLen int, first, last *int, before, after *string) {
+	if remainingCount == 0 || remainingCount == edgesLen {
 		return
 	}
 
@@ -39,12 +39,12 @@ func (p *PageInfo) SetHasNextPage(totalCount, edgesLen int, first, last *int, be
 		return
 	}
 
-	if after == nil && first != nil && *first < totalCount {
+	if after == nil && first != nil && *first < remainingCount {
 		p.HasNextPage = true
 		return
 	}
 
-	if after == nil && last != nil && *last < totalCount {
+	if after == nil && last != nil && *last < remainingCount {
 		p.HasNextPage = true
 		return
 	}
