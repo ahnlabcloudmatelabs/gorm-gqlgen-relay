@@ -39,15 +39,6 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 		return nil, err
 	}
 
-	stmt, err = setAfter(stmt, option.After, orderBy, option.PrimaryKey)
-	if err != nil {
-		return nil, err
-	}
-	stmt, err = setBefore(stmt, option.Before, orderBy, option.PrimaryKey)
-	if err != nil {
-		return nil, err
-	}
-
 	orders, err := order.By(option.Table, option.Tables, _orderBy, option.Last != nil)
 	if err != nil {
 		return nil, err
@@ -55,6 +46,26 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 
 	for _, order := range orders {
 		stmt = stmt.Order(order)
+	}
+
+	stmt, err = setAfter(stmt, option.After, orderBy, option.PrimaryKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// remaining count is derived
+	// before limit and setBefore are applied
+	// after order by and setAfter are applied
+	var remainingCount int64
+	var model Model
+	err = stmt.Model(&model).Count(&remainingCount).Error
+	if err != nil {
+		return nil, err
+	}
+
+	stmt, err = setBefore(stmt, option.Before, orderBy, option.PrimaryKey)
+	if err != nil {
+		return nil, err
 	}
 
 	stmt = limit(stmt, option.First, option.Last)
@@ -71,9 +82,10 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 
 	pageInfo := &PageInfo{}
 	_totalCount := int(totalCount)
+	_remainingCount := int(remainingCount)
 	edgesLen := len(edges)
 	pageInfo.SetHasPreviousPage(_totalCount, edgesLen, option.After)
-	pageInfo.SetHasNextPage(_totalCount, edgesLen, option.First, option.Last, option.Before, option.After)
+	pageInfo.SetHasNextPage(_remainingCount, edgesLen, option.First, option.Last, option.Before, option.After)
 
 	if edgesLen > 0 {
 		pageInfo.StartCursor = &edges[0].Cursor
