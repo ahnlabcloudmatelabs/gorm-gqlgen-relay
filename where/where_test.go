@@ -43,7 +43,7 @@ func TestWhereWithTable(t *testing.T) {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "test.title = ?" {
+	if filter.And[0].Query != "\"test\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -51,7 +51,7 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "test.title = ?" {
+	if filter.Or[0].Query != "\"test\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -59,7 +59,7 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "test.title = ?" {
+	if filter.Or[0].Not.Query != "\"test\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -67,8 +67,8 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "test.title = ? AND test.title IS NULL" ||
-		filter.Query == "test.title IS NULL AND test.title = ?") {
+	if !(filter.Query == "\"test\".\"title\" = ? AND \"test\".\"title\" IS NULL" ||
+		filter.Query == "\"test\".\"title\" IS NULL AND \"test\".\"title\" = ?") {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 
@@ -83,7 +83,7 @@ func TestWhereWithTables(t *testing.T) {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "sample.title = ?" {
+	if filter.And[0].Query != "\"sample\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -91,7 +91,7 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "sample.title = ?" {
+	if filter.Or[0].Query != "\"sample\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -99,7 +99,7 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "sample.title = ?" {
+	if filter.Or[0].Not.Query != "\"sample\".\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -107,8 +107,8 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "sample.title = ? AND sample.title IS NULL" ||
-		filter.Query == "sample.title IS NULL AND sample.title = ?") {
+	if !(filter.Query == "\"sample\".\"title\" = ? AND \"sample\".\"title\" IS NULL" ||
+		filter.Query == "\"sample\".\"title\" IS NULL AND \"sample\".\"title\" = ?") {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 
@@ -123,7 +123,7 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "title = ?" {
+	if filter.And[0].Query != "\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -131,7 +131,7 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "title = ?" {
+	if filter.Or[0].Query != "\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -139,7 +139,7 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "title = ?" {
+	if filter.Or[0].Not.Query != "\"title\" = ?" {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -147,8 +147,8 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "title = ? AND title IS NULL" ||
-		filter.Query == "title IS NULL AND title = ?") {
+	if !(filter.Query == "\"title\" = ? AND \"title\" IS NULL" ||
+		filter.Query == "\"title\" IS NULL AND \"title\" = ?") {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 

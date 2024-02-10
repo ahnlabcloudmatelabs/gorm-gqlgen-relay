@@ -25,12 +25,12 @@ func TestOrder(t *testing.T) {
 		t.Fatal("query length should be 2")
 	}
 
-	if !slices.Contains(query, "sample.field1 ASC") {
-		t.Fatal("query should contain sample.field1 ASC")
+	if !slices.Contains(query, "\"sample\".\"field1\" ASC") {
+		t.Fatal("query should contain \"sample\".\"field1\" ASC", "\nactual:", query)
 	}
 
-	if !slices.Contains(query, "sample.field2 DESC") {
-		t.Fatal("query should contain sample.field2 DESC")
+	if !slices.Contains(query, "\"sample\".\"field2\" DESC") {
+		t.Fatal("query should contain \"sample\".\"field2\" DESC", "\nactual:", query)
 	}
 }
 
@@ -44,12 +44,12 @@ func TestReverseOrder(t *testing.T) {
 		t.Fatal("query length should be 2")
 	}
 
-	if !slices.Contains(query, "field1 DESC") {
-		t.Fatal("query should contain field1 DESC")
+	if !slices.Contains(query, "\"field1\" DESC") {
+		t.Fatal("query should contain \"field1\" DESC", "\nactual:", query)
 	}
 
-	if !slices.Contains(query, "field2 ASC") {
-		t.Fatal("query should contain field2 ASC")
+	if !slices.Contains(query, "\"field2\" ASC") {
+		t.Fatal("query should contain \"field2\" ASC", "\nactual:", query)
 	}
 }
 
@@ -63,11 +63,11 @@ func TestOrder_With_Tables(t *testing.T) {
 		t.Fatal("query length should be 2")
 	}
 
-	if !slices.Contains(query, "sample.field1 ASC") {
-		t.Fatal("query should contain sample.field1 ASC")
+	if !slices.Contains(query, "\"sample\".\"field1\" ASC") {
+		t.Fatal("query should contain \"sample\".\"field1\" ASC")
 	}
 
-	if !slices.Contains(query, "field2 DESC") {
-		t.Fatal("query should contain field2 DESC")
+	if !slices.Contains(query, "\"field2\" DESC") {
+		t.Fatal("query should contain \"field2\" DESC")
 	}
 }
