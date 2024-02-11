@@ -21,8 +21,8 @@ func TestAfter(t *testing.T) {
 		t.Error("Expected 1 argument")
 	}
 
-	if queries[0] != "id > ?" {
-		t.Error("Expected id > ?, got", queries[0])
+	if queries[0] != "\"id\" > ?" {
+		t.Error("Expected \"id\" > ?, got", queries[0])
 	}
 
 	if args[0] != "1" {
@@ -45,8 +45,8 @@ func TestBefore(t *testing.T) {
 		t.Error("Expected 1 argument")
 	}
 
-	if queries[0] != "id > ?" {
-		t.Error("Expected id > ?, got", queries[0])
+	if queries[0] != "\"id\" > ?" {
+		t.Error("Expected \"id\" > ?, got", queries[0])
 	}
 
 	if args[0] != "1" {

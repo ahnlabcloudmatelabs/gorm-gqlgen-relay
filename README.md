@@ -60,14 +60,16 @@ func (r *queryResolver) Todos(ctx context.Context, first *int, after *string, la
 	db := context.Database.Preload("User")
 
 	return relay.Paginate[model.Todo](db, where, orderBy, relay.PaginateOption{
-		First:      first,
-		After:      after,
-		Last:       last,
-		Before:     before,
-		Table:      "todos",
+		First:       first,
+		After:       after,
+		Last:        last,
+		Before:      before,
+    // Like postgres schema, mysql db, mssql schema, etc...
+    TablePrefix: "public",
+		Table:       "todos",
     // If you using joins table
-    // Tables:   &map[string]string{"id": "todos", "user_id": "users"},
-		PrimaryKey: "id", // or "todos.id"
+    // Tables:    &map[string]string{"id": "todos", "user_id": "users"},
+		PrimaryKey:  "id", // or "todos.id"
 	})
 }
 ```
@@ -130,6 +132,7 @@ package main
 | Last | int | The number of reversed items to return |
 | After | string | A cursor for use in pagination, which is a base-64 encoded string that points to a specific page in the dataset. |
 | Before | string | A cursor for use in pagination, which is a base-64 encoded string that points to a specific page in the dataset. |
+| TablePrefix | string | Schema(or DB) name (optional) |
 | Table | string | Table name (optional) |
 | Tables | *map[string]string | Table names (optional) |
 | PrimaryKey | string | Primary key name (optional) |

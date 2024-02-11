@@ -12,6 +12,7 @@ type PaginateOption struct {
 	Last       *int
 	After      *string
 	Before     *string
+	Prefix     *string
 	Table      string
 	Tables     *map[string]string
 	PrimaryKey string
@@ -22,7 +23,7 @@ func Paginate[Model any](db *gorm.DB, _where any, _orderBy any, option PaginateO
 		return nil, err
 	}
 
-	w, err := where.Do(db.Dialector.Name(), option.Table, option.Tables, _where)
+	w, err := where.Do(db.Dialector.Name(), option.Table, option.Tables, option.Prefix, _where)
 	if err != nil {
 		return nil, err
 	}

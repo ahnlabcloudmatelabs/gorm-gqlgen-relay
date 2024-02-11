@@ -3,6 +3,7 @@ package where_test
 import (
 	"testing"
 
+	"github.com/cloudmatelabs/gorm-gqlgen-relay/utils"
 	"github.com/cloudmatelabs/gorm-gqlgen-relay/where"
 )
 
@@ -38,12 +39,12 @@ var query = map[string]any{
 }
 
 func TestWhereWithTable(t *testing.T) {
-	filter, err := where.Do("mysql", "test", nil, query)
+	filter, err := where.Do("postgres", "test", nil, nil, query)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "test.title = ?" {
+	if filter.And[0].Query != `"test"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -51,7 +52,7 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "test.title = ?" {
+	if filter.Or[0].Query != `"test"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -59,7 +60,7 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "test.title = ?" {
+	if filter.Or[0].Not.Query != `"test"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -67,8 +68,8 @@ func TestWhereWithTable(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "test.title = ? AND test.title IS NULL" ||
-		filter.Query == "test.title IS NULL AND test.title = ?") {
+	if !(filter.Query == `"test"."title" = ? AND "test"."title" IS NULL` ||
+		filter.Query == `"test"."title" IS NULL AND "test"."title" = ?`) {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 
@@ -78,12 +79,12 @@ func TestWhereWithTable(t *testing.T) {
 }
 
 func TestWhereWithTables(t *testing.T) {
-	filter, err := where.Do("mysql", "", &map[string]string{"title": "sample"}, query)
+	filter, err := where.Do("postgres", "", &map[string]string{"title": "sample"}, nil, query)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "sample.title = ?" {
+	if filter.And[0].Query != `"sample"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -91,7 +92,7 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "sample.title = ?" {
+	if filter.Or[0].Query != `"sample"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -99,7 +100,7 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "sample.title = ?" {
+	if filter.Or[0].Not.Query != `"sample"."title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -107,8 +108,8 @@ func TestWhereWithTables(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "sample.title = ? AND sample.title IS NULL" ||
-		filter.Query == "sample.title IS NULL AND sample.title = ?") {
+	if !(filter.Query == `"sample"."title" = ? AND "sample"."title" IS NULL` ||
+		filter.Query == `"sample"."title" IS NULL AND "sample"."title" = ?`) {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 
@@ -118,12 +119,12 @@ func TestWhereWithTables(t *testing.T) {
 }
 
 func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
-	filter, err := where.Do("mysql", "", &map[string]string{"created_at": "sample"}, query)
+	filter, err := where.Do("postgres", "", &map[string]string{"created_at": "sample"}, nil, query)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if filter.And[0].Query != "title = ?" {
+	if filter.And[0].Query != `"title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
 	}
 
@@ -131,7 +132,7 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
 	}
 
-	if filter.Or[0].Query != "title = ?" {
+	if filter.Or[0].Query != `"title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
 	}
 
@@ -139,7 +140,7 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
 	}
 
-	if filter.Or[0].Not.Query != "title = ?" {
+	if filter.Or[0].Not.Query != `"title" = ?` {
 		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
 	}
 
@@ -147,8 +148,48 @@ func TestWhereWithTablesWhenNoMatchesColumns(t *testing.T) {
 		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
 	}
 
-	if !(filter.Query == "title = ? AND title IS NULL" ||
-		filter.Query == "title IS NULL AND title = ?") {
+	if !(filter.Query == `"title" = ? AND "title" IS NULL` ||
+		filter.Query == `"title" IS NULL AND "title" = ?`) {
+		t.Errorf("query is not correct: '%s'", filter.Query)
+	}
+
+	if filter.Args[0] != "Hello World" {
+		t.Errorf("args is not correct: '%s'", filter.Args[0])
+	}
+}
+
+func TestWhereWithTableAndPrefix(t *testing.T) {
+	filter, err := where.Do("postgres", "test", nil, utils.ToPointer("dev"), query)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if filter.And[0].Query != `"dev"."test"."title" = ?` {
+		t.Errorf("query is not correct: '%s'", filter.And[0].Query)
+	}
+
+	if filter.And[0].Args[0] != "Hello World" {
+		t.Errorf("args is not correct: '%s'", filter.And[0].Args[0])
+	}
+
+	if filter.Or[0].Query != `"dev"."test"."title" = ?` {
+		t.Errorf("query is not correct: '%s'", filter.Or[0].Query)
+	}
+
+	if filter.Or[0].Args[0] != "Hello World" {
+		t.Errorf("args is not correct: '%s'", filter.Or[0].Args[0])
+	}
+
+	if filter.Or[0].Not.Query != `"dev"."test"."title" = ?` {
+		t.Errorf("query is not correct: '%s'", filter.Or[0].Not.Query)
+	}
+
+	if filter.Or[0].Not.Args[0] != "Hello World" {
+		t.Errorf("args is not correct: '%s'", filter.Or[0].Not.Args[0])
+	}
+
+	if !(filter.Query == `"dev"."test"."title" = ? AND "dev"."test"."title" IS NULL` ||
+		filter.Query == `"dev"."test"."title" IS NULL AND "dev"."test"."title" = ?`) {
 		t.Errorf("query is not correct: '%s'", filter.Query)
 	}
 
