@@ -29,10 +29,16 @@ func loadCursor(defaultInequality string) func(cursor *string, orderBy map[strin
 			orderBy = map[string]any{primaryKey: "ASC"}
 		}
 
+		if !utils.SameKeys(_cursor, orderBy) {
+			return []string{}, []any{}, fmt.Errorf("input error: incorrect cursor given, deserialised base64 cursor map keys must match orderBy map keys, cursor keys: %v vs orderBy keys: %v", utils.GetMapKeys(_cursor), utils.GetMapKeys(orderBy))
+		}
+
 		for field, value := range _cursor {
-			direction := orderBy[field].(string)
-			queries = append(queries, fmt.Sprintf("\"%s\" %s ?", field, inequality(defaultInequality, direction)))
-			args = append(args, value)
+			if v, ok := orderBy[field]; ok {
+				direction := v.(string)
+				queries = append(queries, fmt.Sprintf("\"%s\" %s ?", field, inequality(defaultInequality, direction)))
+				args = append(args, value)
+			}
 		}
 		return
 	}
